@@ -66,6 +66,7 @@ choice
 	default BR2_GDB_VERSION_9_2
 	depends on !BR2_arc
 	depends on !BR2_csky
+	depends on !BR2_or1k
 	help
 	  Select the version of gdb you wish to use.
 
