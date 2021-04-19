@@ -1,0 +1,68 @@
+From 9b594476eb8d6bfe79cc62c10a581ccce8021c57 Mon Sep 17 00:00:00 2001
+From: Stafford Horne <shorne@gmail.com>
+Date: Mon, 19 Apr 2021 09:10:34 +0900
+Subject: [PATCH] or1k: Add mcmodel option to handle large GOTs
+
+When building libgeos we get an error with:
+
+    linux-uclibc/9.3.0/crtbeginS.o: in function `__do_global_dtors_aux':
+    crtstuff.c:(.text+0x118): relocation truncated to fit: R_OR1K_GOT16 against symbol `__cxa_finalize' defined in .text section in
+    /home/shorne/work/openrisc/3eb9f9d0f6d8274b2d19753c006bd83f7d536e3c/output/host/or1k-buildroot-linux-uclibc/sysroot/lib/libc.so.
+
+This is caused by GOT code having a limit of 64k.  In OpenRISC this
+looks to be the only relocation code pattern to be limited to 64k.
+
+This patch allows specifying a new option -mcmodel=large which can be
+used to generate 2 more instructions to construct 32-bit addresses for
+up to 4G GOTs.
+
+gcc/ChangeLog:
+
+	PR 99783
+	* config/or1k/or1k-opts.h: New file.
+	* config/or1k/or1k.c (or1k_legitimize_address_1, print_reloc):
+	Support generating gotha relocations if -mcmodel=large is
+	specified.
+	* config/or1k/or1k.h (TARGET_CMODEL_SMALL, TARGET_CMODEL_LARGE):
+	New macros.
+	* config/or1k/or1k.opt (mcmodel=): New option.
+	* doc/invoke.text (OpenRISC Options): Document mcmodel.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ gcc/doc/invoke.texi | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 0ab6c9c6449..ea6f6b689b3 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -1030,7 +1030,8 @@ Objective-C and Objective-C++ Dialects}.
+ @emph{OpenRISC Options}
+ @gccoptlist{-mboard=@var{name}  -mnewlib  -mhard-mul  -mhard-div @gol
+ -msoft-mul  -msoft-div @gol
+--mcmov  -mror  -msext  -msfimm  -mshftimm}
++-mcmov  -mror  -msext  -msfimm  -mshftimm @gol
++-mcmodel=@var{code-model}}
+ 
+ @emph{PDP-11 Options}
+ @gccoptlist{-mfpu  -msoft-float  -mac0  -mno-ac0  -m40  -m45  -m10 @gol
+@@ -27408,6 +27409,15 @@ MWAITX, SHA, CLZERO, AES, PCL_MUL, CX16, MOVBE, MMX, SSE, SSE2, SSE3, SSE4A,
+ SSSE3, SSE4.1, SSE4.2, ABM, XSAVEC, XSAVES, CLFLUSHOPT, POPCNT, and 64-bit
+ instruction set extensions.)
+ 
++@item -mcmodel=small
++@opindex mcmodel=small
++Generate OpenRISC code for the small model: The GOT is limited to 64k. This is
++the default model.
++
++@item -mcmodel=large
++@opindex mcmodel=large
++Generate OpenRISC code for the large model: The GOT may grow up to 4G in size.
++
+ 
+ @item btver1
+ CPUs based on AMD Family 14h cores with x86-64 instruction set support.  (This
+-- 
+2.25.1
+

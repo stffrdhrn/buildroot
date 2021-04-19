@@ -1,0 +1,38 @@
+From 67df196200d9203a27f15045ec4071d5fed0a593 Mon Sep 17 00:00:00 2001
+From: Stafford Horne <shorne@gmail.com>
+Date: Mon, 19 Apr 2021 09:05:24 +0900
+Subject: [PATCH 6/6] or1k: Fail link if the PLT relocation overflows
+
+bfd/ChangeLog:
+
+	PR 27746
+	* elf32-or1k.c (or1k_elf_finish_dynamic_symbol): Add condition
+	to check and fail if the PLT relocation overflows.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ bfd/elf32-or1k.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/bfd/elf32-or1k.c b/bfd/elf32-or1k.c
+index a8d7a67290d..976c85062b2 100644
+--- a/bfd/elf32-or1k.c
++++ b/bfd/elf32-or1k.c
+@@ -2453,6 +2453,14 @@ or1k_elf_finish_dynamic_symbol (bfd *output_bfd,
+       got_offset = (plt_index + 3) * 4;
+       got_addr = got_base_addr + got_offset;
+ 
++      if (!htab->saw_gotha && plt_reloc > 0xffff)
++	{
++	  _bfd_error_handler (_("%pB: plt relocation overflow when writing %s"),
++		              output_bfd, h->root.root.string);
++	  bfd_set_error (bfd_error_bad_value);
++	  return FALSE;
++	}
++
+       /* Fill in the entry in the procedure linkage table.  */
+       if (htab->saw_plta)
+ 	{
+-- 
+2.25.1
+

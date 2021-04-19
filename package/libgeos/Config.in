@@ -3,7 +3,6 @@ config BR2_PACKAGE_LIBGEOS
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_USE_WCHAR
 	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
-	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_21464
 	help
 	  GEOS (Geometry Engine - Open Source) is a C++ port of the
 	  JTS Topology Suite (JTS). It aims to contain the complete
@@ -18,6 +17,3 @@ comment "libgeos needs a toolchain w/ C++, wchar"
 
 comment "libgeos needs a toolchain not affected by BINUTILS bug 27597"
 	depends on BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
-
-comment "libgeos needs a toolchain not affected by BINUTILS bug 21464"
-	depends on BR2_TOOLCHAIN_HAS_BINUTILS_BUG_21464
