@@ -1,7 +1,7 @@
-From 8e4f44cfee950b1a1eb4dc518eb923356dd6c70b Mon Sep 17 00:00:00 2001
+From cc7b0e8ec5bfe430c23e2ba4ee22048a59e61f0a Mon Sep 17 00:00:00 2001
 From: Stafford Horne <shorne@gmail.com>
-Date: Mon, 19 Apr 2021 09:10:34 +0900
-Subject: [PATCH] or1k: Add mcmodel option to handle large GOTs
+Date: Tue, 6 Apr 2021 05:47:17 +0900
+Subject: [PATCH v2 1/2] or1k: Add mcmodel option to handle large GOTs
 
 When building libgeos we get an error with:
 
@@ -27,8 +27,6 @@ gcc/ChangeLog:
 	New macros.
 	* config/or1k/or1k.opt (mcmodel=): New option.
 	* doc/invoke.text (OpenRISC Options): Document mcmodel.
-
-Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
 ---
  gcc/config/or1k/or1k-opts.h | 30 ++++++++++++++++++++++++++++++
  gcc/config/or1k/or1k.c      | 11 +++++++++--
@@ -75,7 +73,7 @@ index 00000000000..f791b894fdd
 +
 +#endif /* GCC_OR1K_OPTS_H */
 diff --git a/gcc/config/or1k/or1k.c b/gcc/config/or1k/or1k.c
-index 5fa5425aa2b..88613f9596b 100644
+index e772a7addea..27d3fa17995 100644
 --- a/gcc/config/or1k/or1k.c
 +++ b/gcc/config/or1k/or1k.c
 @@ -750,7 +750,14 @@ or1k_legitimize_address_1 (rtx x, rtx scratch)
@@ -104,7 +102,7 @@ index 5fa5425aa2b..88613f9596b 100644
    reloc_type type = RTYPE_DIRECT;
  
 diff --git a/gcc/config/or1k/or1k.h b/gcc/config/or1k/or1k.h
-index 23db771d8fb..f1646d16dfd 100644
+index fe01ab81ead..669907e7e74 100644
 --- a/gcc/config/or1k/or1k.h
 +++ b/gcc/config/or1k/or1k.h
 @@ -21,6 +21,8 @@
@@ -116,7 +114,7 @@ index 23db771d8fb..f1646d16dfd 100644
  /* Names to predefine in the preprocessor for this target machine.  */
  #define TARGET_CPU_CPP_BUILTINS()		\
    do						\
-@@ -35,6 +37,11 @@
+@@ -37,6 +39,11 @@
      }						\
    while (0)
  
@@ -129,7 +127,7 @@ index 23db771d8fb..f1646d16dfd 100644
  
  #define DEFAULT_SIGNED_CHAR 1
 diff --git a/gcc/config/or1k/or1k.opt b/gcc/config/or1k/or1k.opt
-index 03c9b8d0bba..8e035075f8a 100644
+index 6bd0f3eee6d..cc23e3b8856 100644
 --- a/gcc/config/or1k/or1k.opt
 +++ b/gcc/config/or1k/or1k.opt
 @@ -21,6 +21,9 @@
@@ -166,10 +164,10 @@ index 03c9b8d0bba..8e035075f8a 100644
  Target RejectNegative Mask(CMOV)
  Enable generation of conditional move (l.cmov) instructions.  By default the
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index eabeec944e7..eda350c99ec 100644
+index 096cebc8562..63cc4ec97db 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -1102,7 +1102,8 @@ Objective-C and Objective-C++ Dialects}.
+@@ -1135,7 +1135,8 @@ Objective-C and Objective-C++ Dialects}.
  @gccoptlist{-mboard=@var{name}  -mnewlib  -mhard-mul  -mhard-div @gol
  -msoft-mul  -msoft-div @gol
  -msoft-float  -mhard-float  -mdouble-float -munordered-float @gol
@@ -179,7 +177,7 @@ index eabeec944e7..eda350c99ec 100644
  
  @emph{PDP-11 Options}
  @gccoptlist{-mfpu  -msoft-float  -mac0  -mno-ac0  -m40  -m45  -m10 @gol
-@@ -25111,6 +25112,15 @@ Enable generation of shift with immediate (@code{l.srai}, @code{l.srli},
+@@ -26406,6 +26407,15 @@ Enable generation of shift with immediate (@code{l.srai}, @code{l.srli},
  @code{l.slli}) instructions.  By default extra instructions will be generated
  to store the immediate to a register first.
  
@@ -196,5 +194,5 @@ index eabeec944e7..eda350c99ec 100644
  @end table
  
 -- 
-2.25.1
+2.26.2
 
